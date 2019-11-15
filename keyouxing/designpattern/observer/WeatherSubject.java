@@ -1,13 +1,17 @@
-package keyouxing.observer;
+package keyouxing.designpattern.observer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class WeatherSubject {
-
+    Logger logger = LoggerFactory.getLogger(WeatherSubject.class);
     private String weather;
 
     public void setWeather(String weather){
+        logger.info("set weather: {}", weather);
         this.weather = weather;
     }
 

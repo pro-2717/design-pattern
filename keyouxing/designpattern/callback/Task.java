@@ -1,4 +1,4 @@
-package keyouxing.callback;
+package keyouxing.designpattern.callback;
 
 public interface Task {
 

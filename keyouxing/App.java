@@ -1,19 +1,31 @@
 package keyouxing;
 
-import keyouxing.callback.SimpleTask;
-import keyouxing.callback.Task;
-import keyouxing.observer.SellerObserver;
-import keyouxing.observer.SportsObserver;
-import keyouxing.observer.WeatherObserver;
-import keyouxing.observer.WeatherSubject;
+import keyouxing.designpattern.ReaderWriterLock.ReaderWriterLock;
+import keyouxing.designpattern.ReaderWriterLock.Writer;
+import keyouxing.designpattern.callback.SimpleTask;
+import keyouxing.designpattern.observer.SellerObserver;
+import keyouxing.designpattern.observer.SportsObserver;
+import keyouxing.designpattern.observer.WeatherObserver;
+import keyouxing.designpattern.observer.WeatherSubject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.IntStream;
 
 public class App {
+    static Logger logger = LoggerFactory.getLogger(App.class);
     public static void main(String[] args){
+//        testObserver();
+//
+//        System.out.println();
+//
+//        testCallback();
+//
+//        System.out.println();
 
-        testObserver();
-
-        testCallback();
-
+        readerWriterLock();
     }
 
     private static void testObserver(){
@@ -25,17 +37,23 @@ public class App {
         subject.addWeatherObserver(sellerObserver);
         subject.addWeatherObserver(sportsObserver);
 
-        System.out.println("set weather: sunny\n");
         subject.setWeather("sunny");
         subject.notifyWeatherObserver();
 
-        System.out.println("\nreset weather: rainy\n");
         subject.setWeather("rainy");
         subject.notifyWeatherObserver();
     }
 
     private static void testCallback(){
         SimpleTask task = new SimpleTask();
-        task.completeCallback(() -> { System.out.println("The task execute completed"); }).execute();
+        task.completeCallback(() -> logger.info("The task execute completed")).execute();
+    }
+
+    private static void readerWriterLock() {
+        ReaderWriterLock readerWriterLock = new ReaderWriterLock();
+        ExecutorService executor = Executors.newFixedThreadPool(5);
+//        ReaderWriterLock lock = new ReaderWriterLock();
+        IntStream.range(0, 5).forEach(i -> executor.submit(new Writer("Writer "+ i, readerWriterLock.writeLock())));
+
     }
 }
