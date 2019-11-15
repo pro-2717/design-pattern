@@ -11,11 +11,10 @@ import java.util.Random;
  */
 public class ProducerConsumer {
 
-    private List<Integer> list = new ArrayList<>();
-    private final static int BOUND = 10;
+    private volatile List<Integer> list = new ArrayList<>();
+    private final static int BOUND = 30;
     private final static int CAPACITY = 10;
     private final static int EMPTY = 0;
-    private boolean available;
 
     public synchronized void produce(){
         while(list.size() == CAPACITY){
@@ -25,8 +24,9 @@ public class ProducerConsumer {
                 e.printStackTrace();
             }
         }
-        list.add((new Random()).nextInt(BOUND));
-        available = true;
+        int product = (new Random()).nextInt(BOUND);
+        list.add(product);
+        System.out.println(Thread.currentThread().getName() + " produce: " + product);
         notifyAll();
     }
 
@@ -38,8 +38,8 @@ public class ProducerConsumer {
                 e.printStackTrace();
             }
         }
-        list.remove(0);
-        available = false;
+        int product = list.remove(0);
+        System.out.println(Thread.currentThread().getName() + " consume: " + product);
         notifyAll();
     }
 
