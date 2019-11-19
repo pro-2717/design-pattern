@@ -9,7 +9,7 @@ import java.util.List;
  * when the size of container is 5, println("size is 5")
  * @author keyouxing
  */
-public class WaitNotify {
+public class ListenThread {
 
     private List<Integer> list = new ArrayList<>();
 
@@ -48,7 +48,7 @@ public class WaitNotify {
     }
 
     public static void main(String[] args) {
-        WaitNotify container = new WaitNotify();
+        ListenThread container = new ListenThread();
         new Thread(container::put).start();
         new Thread(container::listen).start();
     }
