@@ -5,28 +5,31 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * One concurrent(FirstThread) put element into container, from one to ten,
- * Another concurrent(SecondThread) listens container,
- * when the size of container is 5, println("size is 5")
+ * One concurrent put element into container, from one to ten,
+ * Another concurrent listens container, when the size of container is 5, println("size is 5")
  * @author keyouxing
  */
 public class CountDown {
-    CountDownLatch latch = new CountDownLatch(1);
+    private CountDownLatch latch = new CountDownLatch(1);
 
     private List<Integer> list = new ArrayList<>();
 
+    private int capacity = 10;
+
     private Object lock = new Object();
+
+    private int latchKey = 5;
 
     public void put(){
 
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= capacity; i++) {
             list.add(i);
             System.out.println("add: " + i);
-            if(list.size()==5){
+            if(list.size() == latchKey){
                 latch.countDown();
             }
             try {
-                Thread.sleep(100);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -36,7 +39,7 @@ public class CountDown {
 
     public void listen(){
 
-        if(list.size() != 5){
+        if(list.size() != latchKey){
             try {
                 latch.await();
                 System.out.println("size is 5");

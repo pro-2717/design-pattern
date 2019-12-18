@@ -1,29 +1,41 @@
 package keyouxing.interview.concurrent.sync;
 
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.locks.ReentrantLock;
 import org.openjdk.jol.info.ClassLayout;
 
 /**
  * @author keyouxing
  */
 public class ObjectLayout {
+  public static void main(String[] args) {
+      CyclicBarrier cb = new CyclicBarrier(2,()->{
+          System.out.println(3);
+      });
 
-    private static Demo demo = new Demo();
-    private void lock(){
-        synchronized (demo){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println(ClassLayout.parseInstance(demo).toPrintable());
-        }
-    }
-    public static void main(String[] args){
+      new Thread(()->{
+          try {
+              System.out.println("1");
+              cb.await();
 
-        ObjectLayout layout = new ObjectLayout();
-        layout.lock();
-        layout.lock();
+          } catch (InterruptedException e) {
+              e.printStackTrace();
+          } catch (BrokenBarrierException e) {
+              e.printStackTrace();
+          }
+      }).start();
 
-    }
+      try {
+          System.out.println("2");
+          cb.await();
 
+      } catch (InterruptedException e) {
+          e.printStackTrace();
+      } catch (BrokenBarrierException e) {
+          e.printStackTrace();
+      }
+  }
 }
